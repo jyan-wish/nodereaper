@@ -200,8 +200,10 @@ func (d *Deleter) killMyselfFirst() bool {
 		return true
 	}
 	// Keep going if we're already deleting
-	if d.states.Groups[d.nodeGroupKey(myNode)].Nodes[myNode.Name].State != DontWantDelete {
-		return true
+	if group := d.states.Groups[d.nodeGroupKey(myNode)]; group != nil {
+		if group.Nodes[myNode.Name].State != DontWantDelete {
+			return true
+		}
 	}
 	// Don't delete if we wouldn't want to
 	if killMyself, _ := d.StateTransitionFunction(d.opts.NodeName, DontWantDelete, WantDelete); !killMyself {
